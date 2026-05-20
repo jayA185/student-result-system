@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EduTrack — Student Results System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <div class="bg-animated">
+    <div class="bg-blob blob-1"></div>
+    <div class="bg-blob blob-2"></div>
+    <div class="bg-blob blob-3"></div>
+    <div class="bg-blob blob-4"></div>
+  </div>
+  <div class="bg-dots"></div>
+  <div class="particles" id="particles"></div>
+
+  <div id="login-page">
+    <div class="login-container">
+      <div class="login-logo">
+        <div class="logo-icon">
+          <svg width="36" height="36" viewBox="0 0 38 38" fill="none">
+            <defs>
+              <linearGradient id="lg1" x1="0" y1="0" x2="38" y2="38" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#ffffff" stop-opacity="0.9" />
+                <stop offset="100%" stop-color="#ffffff" stop-opacity="0.5" />
+              </linearGradient>
+            </defs>
+            <path d="M10 26L16 18L20 22L25 14L28 18" stroke="url(#lg1)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+            <circle cx="28" cy="18" r="2" fill="white" />
+            <circle cx="25" cy="14" r="2" fill="white" />
+          </svg>
+        </div>
+        <h1>EduTrack</h1>
+        <p>Advanced Academic Performance System</p>
+      </div>
+
+      <div class="login-box">
+        <div class="role-title">Choose Portal Perspective</div>
+        <div class="role-cards">
+          <div class="role-card selected" id="role-admin" onclick="selectRole('admin')">
+            <span class="role-icon">🛡️</span>
+            <div class="role-name">Administrator</div>
+            <div class="role-desc">Manage data, structures, analytics</div>
+          </div>
+          <div class="role-card" id="role-student" onclick="selectRole('student')">
+            <span class="role-icon">🎓</span>
+            <div class="role-name">Student</div>
+            <div class="role-desc">View your results & report cards</div>
+          </div>
+        </div>
+
+        <div id="login-err" class="login-err">⚠ Incorrect credentials. Try again.</div>
+
+        <div class="form-group">
+          <label>Username / Roll Number</label>
+          <div class="input-wrap">
+            <input type="text" id="login-user" placeholder="Enter username or roll number" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Password</label>
+          <div class="input-wrap">
+            <input type="password" id="login-pass" placeholder="Enter your password" onkeydown="if(event.key==='Enter')doLogin()" />
+          </div>
+        </div>
+
+        <button class="btn-login" onclick="doLogin()">
+          <span>Sign In</span>
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <path d="M3 9h12M10 5l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </button>
+        <p class="login-hint">
+          Admin: <b>admin / admin123</b> &nbsp;|&nbsp; Student: roll no + <b>pass1234</b>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div id="app">
+    <header class="header">
+      <div class="header-brand">
+        <div class="logo-sm">
+          <svg width="20" height="20" viewBox="0 0 38 38" fill="none">
+            <path d="M10 26L16 18L20 22L25 14L28 18" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </div>
+        EduTrack
+      </div>
+      <nav class="header-nav" id="main-nav"></nav>
+      <div class="header-right">
+        <div class="user-pill">
+          <div class="user-avatar" id="user-avatar-el">👤</div>
+          <span id="user-name-el" style="font-weight:600"></span>
+          <span class="role-tag" id="role-tag-el"></span>
+        </div>
+        <button class="btn-logout" onclick="doLogout()">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <path d="M5 2H2v10h3M9 4l3 3-3 3M12 7H6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+          Logout
+        </button>
+      </div>
+    </header>
+
+    <div class="modal-overlay" id="modal-student">
+      <div class="modal">
+        <div class="modal-header">
+          <h2 id="student-modal-title">Add Student</h2>
+          <button class="modal-close" onclick="closeModal('modal-student')">✕</button>
+        </div>
+        <div id="modal-alert" class="alert"></div>
+        <div class="form-group">
+          <label>Roll Number</label>
+          <input type="text" id="stu-roll" placeholder="e.g. 2024001" />
+        </div>
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" id="stu-name" placeholder="e.g. Aarav Sharma" />
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Class Segment</label>
+            <select id="stu-class">
+              <option>10-A</option><option>10-B</option>
+              <option>11-Science</option><option>11-Commerce</option>
+              <option>12-Science</option><option>12-Commerce</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Gender</label>
+            <select id="stu-gender">
+              <option>Male</option><option>Female</option><option>Other</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" onclick="closeModal('modal-student')">Cancel</button>
+          <button class="btn btn-primary" onclick="submitStudentForm()">Save Records</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-overlay" id="modal-result">
+      <div class="modal" style="max-width:560px">
+        <div class="modal-header">
+          <h2>Input Marks Entry</h2>
+          <button class="modal-close" onclick="closeModal('modal-result')">✕</button>
+        </div>
+        <div id="result-modal-alert" class="alert"></div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Target Student</label>
+            <select id="res-student-id" onchange="onModalStudentClassChange()"></select>
+          </div>
+          <div class="form-group">
+            <label>Term Exam</label>
+            <select id="res-exam">
+              <option>Unit Test 1</option><option>Unit Test 2</option>
+              <option>Mid-Term</option><option>Final Exam</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group" style="margin-bottom:6px"><label>Academic Year</label><input type="text" id="res-year" value="2026" /></div>
+        <div style="margin:1rem 0 0.5rem;font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em">Subject Metric Breakdowns</div>
+        <div id="subject-fields-container" style="max-height:220px;overflow-y:auto;padding-right:4px"></div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" onclick="closeModal('modal-result')">Cancel</button>
+          <button class="btn btn-primary" onclick="submitResultForm()">Compute & Save</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="view-dashboard" class="view">
+      <div class="container">
+        <div class="page-header">
+          <div><h1>📊 System <span>Overview</span></h1><p>Real-time school performance & metrics indicator</p></div>
+        </div>
+        <div class="stat-grid" id="dash-stats"></div>
+        <div class="two-col">
+          <div class="card">
+            <div class="card-header"><span class="card-title">Grade Distribution</span></div>
+            <div class="card-body"><div class="bar-chart" id="grade-bar-chart"></div></div>
+          </div>
+          <div class="card">
+            <div class="card-header"><span class="card-title">🏆 Top Performers</span></div>
+            <div class="card-body"><div id="top-performers-list"></div></div>
+          </div>
+        </div>
+        <div class="two-col" style="margin-top:1.5rem">
+          <div class="card">
+            <div class="card-header"><span class="card-title">Class-wise Average</span></div>
+            <div class="card-body"><div id="class-avg-chart" class="bar-chart"></div></div>
+          </div>
+          <div class="card">
+            <div class="card-header"><span class="card-title">Subject Performance</span></div>
+            <div class="card-body"><div id="subject-perf-chart" class="bar-chart"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="view-students" class="view">
+      <div class="container">
+        <div class="page-header">
+          <div><h1>👥 <span>Students</span></h1><p>Manage student records and profiles</p></div>
+        </div>
+        <div id="student-alert" class="alert"></div>
+        <div class="search-bar">
+          <input type="text" id="student-search" placeholder="Search by name or roll number..." oninput="renderStudentTable()" />
+          <select id="student-class-filter" onchange="renderStudentTable()">
+            <option value="">All Classes</option>
+            <option>10-A</option><option>10-B</option>
+            <option>11-Science</option><option>11-Commerce</option>
+            <option>12-Science</option><option>12-Commerce</option>
+          </select>
+          <button class="btn btn-primary" onclick="openStudentModal()">+ Add Student</button>
+        </div>
+        <div class="card">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>#</th><th>Roll No</th><th>Name</th><th>Class</th><th>Gender</th><th>Exams</th><th>Avg %</th><th>Grade</th><th>Actions</th></tr>
+              </thead>
+              <tbody id="student-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="view-results" class="view">
+      <div class="container">
+        <div class="page-header">
+          <div><h1>📝 <span>Results</span></h1><p>Exam results entry and management</p></div>
+          <div id="results-add-btn"></div>
+        </div>
+        <div id="result-alert" class="alert"></div>
+        <div class="search-bar">
+          <input type="text" id="result-search" placeholder="Search student..." oninput="renderResultTable()" />
+          <select id="result-exam-filter" onchange="renderResultTable()">
+            <option value="">All Exams</option>
+            <option>Unit Test 1</option><option>Unit Test 2</option>
+            <option>Mid-Term</option><option>Final Exam</option>
+          </select>
+        </div>
+        <div class="card">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>Student Name</th><th>Roll No</th><th>Exam Term</th><th>Class</th><th>Markings Breakdowns</th><th>Total</th><th>Pct</th><th>Status</th><th id="result-action-th">Actions</th></tr>
+              </thead>
+              <tbody id="result-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="view-analysis" class="view">
+      <div class="container">
+        <div class="page-header">
+          <div><h1>📉 <span>Analytics</span> Laboratory</h1><p>Granular structural and curriculum failure rate analyses</p></div>
+        </div>
+        <div class="tab-bar">
+          <button class="tab-btn active" id="tab-btn-rank" onclick="switchAnalysisTab('rank')">Leaderboards</button>
+          <button class="tab-btn" id="tab-btn-subj" onclick="switchAnalysisTab('subj')">Subject Analysis</button>
+        </div>
+        <div id="analysis-pane-rank" class="analysis-pane" style="display:block">
+          <div class="card" style="max-width:720px"><div class="card-body" id="rankings-list"></div></div>
+        </div>
+        <div id="analysis-pane-subj" class="analysis-pane" style="display:none">
+          <div id="subject-analysis"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="view-reports" class="view">
+      <div class="container">
+        <div class="page-header">
+          <div><h1>📄 Academic <span>Report Card</span></h1><p>Generate formal cumulative and printable report modules</p></div>
+        </div>
+        <div class="card" style="margin-bottom:1.5rem">
+          <div class="card-body" style="padding:1.2rem">
+            <div style="display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap">
+              <div class="form-group" style="margin:0;flex:1;min-width:180px"><label>Choose Target Student</label><select id="report-student-sel"></select></div>
+              <div class="form-group" style="margin:0;flex:1;min-width:180px">
+                <label>Target Term</label>
+                <select id="report-exam-sel">
+                  <option value="">All Combined (Average)</option>
+                  <option>Unit Test 1</option><option>Unit Test 2</option>
+                  <option>Mid-Term</option><option>Final Exam</option>
+                </select>
+              </div>
+              <button class="btn btn-primary" onclick="generateReport()" style="height:40px">Generate Document</button>
+            </div>
+          </div>
+        </div>
+        <div id="report-output"></div>
+      </div>
+    </div>
+
+    <div id="view-myresults" class="view">
+      <div class="container">
+        <div id="my-results-content"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
